@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/your-username/fullstack-app.git'
+                git 'https://github.com//fullstack-app.git'
             }
         }
 
