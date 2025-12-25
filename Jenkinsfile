@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                git 'https://github.com/CodeByAfroj/devOps-project.git'
-            }
-        }
-
         stage('Docker Login') {
             steps {
                 withCredentials([
