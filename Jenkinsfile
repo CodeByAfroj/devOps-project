@@ -10,22 +10,22 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com//fullstack-app.git'
+                git 'https://github.com/CodeByAfroj/devOps-project.git'
             }
         }
 
         stage('Build Backend Image') {
             steps {
-                dir('backend') {
-                    sh 'docker build -t $DOCKERHUB_USER/backend:latest .'
+                dir('backend-ci') {
+                    sh 'docker build -t $DOCKERHUB_USER/backend-ci:latest .'
                 }
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                dir('frontend') {
-                    sh 'docker build -t $DOCKERHUB_USER/frontend:latest .'
+                dir('frontend-ci') {
+                    sh 'docker build -t $DOCKERHUB_USER/frontend-ci:latest .'
                 }
             }
         }
@@ -39,8 +39,8 @@ pipeline {
         stage('Push Images') {
             steps {
                 sh '''
-                  docker push $DOCKERHUB_USER/backend:latest
-                  docker push $DOCKERHUB_USER/frontend:latest
+                  docker push $DOCKERHUB_USER/backend-ci:latest
+                  docker push $DOCKERHUB_USER/frontend-ci:latest
                 '''
             }
         }
