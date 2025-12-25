@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKERHUB_USER = credentials('dockerhub-username')
-        DOCKERHUB_PASS = credentials('dockerhub-password')
-    }
-
     stages {
 
         stage('Checkout Code') {
@@ -14,41 +9,73 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )
+                ]) {
+                    sh 'docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS'
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
-                dir('backend-ci') {
-                    sh 'docker build -t $DOCKERHUB_USER/backend-ci:latest .'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )
+                ]) {
+                    dir('backend-ci') {
+                        sh 'docker build -t $DOCKERHUB_USER/backend-ci:latest .'
+                    }
                 }
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                dir('frontend-ci') {
-                    sh 'docker build -t $DOCKERHUB_USER/frontend-ci:latest .'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )
+                ]) {
+                    dir('frontend-ci') {
+                        sh 'docker build -t $DOCKERHUB_USER/frontend-ci:latest .'
+                    }
                 }
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                sh 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
             }
         }
 
         stage('Push Images') {
             steps {
-                sh '''
-                  docker push $DOCKERHUB_USER/backend-ci:latest
-                  docker push $DOCKERHUB_USER/frontend-ci:latest
-                '''
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )
+                ]) {
+                    sh '''
+                      docker push $DOCKERHUB_USER/backend-ci:latest
+                      docker push $DOCKERHUB_USER/frontend-ci:latest
+                    '''
+                }
             }
         }
 
         stage('Deploy') {
             steps {
                 sh '''
-                  docker-compose down
+                  docker-compose down || true
                   docker-compose up -d
                 '''
             }
