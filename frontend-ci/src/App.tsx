@@ -24,7 +24,7 @@ function App() {
    
   return (
     <>
-       <h1>this is unit testing</h1>
+       <h1>this is unit testing...</h1>
       {data.map((msg) => (
         <div key={msg.id}>
           {msg.text}
