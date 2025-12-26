@@ -24,8 +24,7 @@ function App() {
    
   return (
     <>
-       <h1>Hello This is My First Project</h1>
-       <h2>welcome to my web</h2>
+       <h1>this is unit testing</h1>
       {data.map((msg) => (
         <div key={msg.id}>
           {msg.text}
