@@ -26,6 +26,7 @@ function App() {
     <>
        <h1>Hello This is My First Project</h1>
        <h1>Welcome</h1>
+      <h2>Hey!</h2>
       {data.map((msg) => (
         <div key={msg.id}>
           {msg.text}
